@@ -1,0 +1,14 @@
+---
+- hosts: all
+  roles:
+    - spark
+  vars:
+    java:
+      package_name: java-1.8.0-openjdk-headless.x86_64
+    spark:
+      user: spark
+      group: spark
+      version: 2.4.5
+      hadoop_version: 2.7
+      mirror: "http://apachemirror.wuchna.com/spark"
+#     download_url: "{{spark.binary_base_url}}/spark-{{spark.version}}/spark-{{spark.version}}-bin-hadoop{{spark.hadoop_version}}.tgz"

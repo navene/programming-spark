@@ -1,0 +1,24 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos7-base-box"
+  config.vm.hostname = "spark"
+
+  config.vm.network "private_network", ip: "192.168.51.101"
+  config.vm.synced_folder ".", "/vagrant", type: "nfs"
+  config.vm.synced_folder "../data", "/vagrant/data", type: "nfs"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 4196
+    vb.cpus = 2
+  end
+
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.install_mode = "default"
+    ansible.playbook = "provision/ansible/playbook.yml"
+  end
+
+  # Requires vagrant-vbguest plugin
+  config.vbguest.auto_update = true
+end

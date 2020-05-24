@@ -1,0 +1,48 @@
+---
+- name: Install Java
+  yum:
+    name: "{{java.package_name}}"
+    state: present
+  become: yes
+
+- name: Check Spark binary already available in /vagrant/binaries folder
+  stat:
+    path: /vagrant/binaries/spark-{{spark.version}}-bin-hadoop{{spark.hadoop_version}}.tgz
+  register: spark_binary_available
+
+- name: Download Spark binary if it is not already available
+  get_url:
+    url: "{{spark.mirror}}/spark-{{spark.version}}/spark-{{spark.version}}-bin-hadoop{{spark.hadoop_version}}.tgz"
+    dest: /vagrant/binaries
+  when: spark_binary_available.stat.exists == false
+
+- name: Check Spark is already unpacked
+  stat:
+    path: /opt/spark-{{spark.version}}
+  register: spark_installed
+
+- name: add group spark
+  group:
+    name: "{{spark.group}}"
+  ignore_errors: yes
+  when: spark_installed.stat.exists == false
+  become: yes
+
+- name: add user spark
+  user:
+    name: "{{spark.user}}"
+    group: "{{spark.group}}"
+    state: present
+  ignore_errors: yes
+  when: spark_installed.stat.exists == false
+  become: yes
+
+- name: Unpack Spark Binary
+  unarchive:
+    src: /vagrant/binaries/spark-{{spark.version}}-bin-hadoop{{spark.hadoop_version}}.tgz
+    dest: /opt
+    owner: "{{spark.user}}"
+    group: "{{spark.group}}"
+  when: spark_installed.stat.exists == false
+  become: yes
+  

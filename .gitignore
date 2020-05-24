@@ -1,2 +1,15 @@
 *.class
 *.log
+
+target/
+project/
+
+# IntelliJ IDEA files
+.idea
+*.iml
+*.ipr
+*.iws
+
+# Vagrant files
+vagrant/.vagrant
+vagrant/binaries
